@@ -30,7 +30,7 @@ Usage
 When Whatson starts available data nodes, indices and their shards will be
 shown.
 
-!screenshot-init.png!
+![Whatson](screenshot-init.png "Whatson")
 
 The nodes section will show a bar chart of available disk on each node.
 The bars are color coded as follows:
@@ -60,7 +60,7 @@ To inspect the state of underlaying Lucene segments first select a index
 or shard within an index. Once selected something like the following will
 be shown.
 
-!screenshot-segments.png!
+![Segments Visualization](screenshot-segments.png "Segments Visualization")
 
 Segments are drawn on a logarithmic scale based on the byte size of the
 segment and should resemble the visualizations in the
