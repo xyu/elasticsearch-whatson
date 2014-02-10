@@ -82,6 +82,8 @@
 				self.sync_data();
 			}, self._refresh_interval );
 
+			nodes.reset();
+			indices.reset();
 			self._is_refreshing = false;
 			self.sync_data();
 		},
@@ -241,7 +243,16 @@
 			} );
 		},
 
+		reset: function() {
+			var self = this;
+			self._hover = null;
+			self._is_refreshing = false;
+		},
+
 		_write_out_info_cells: function( node, tr ) {
+			if ( null == node )
+				return;
+
 			tr.children( '.col-name' ).text( node.name );
 			tr.children( '.col-ver' ).text( node.version );
 			tr.children( '.col-total' ).text( d3.format( '.3s' )( node.size.disk ) + 'B' );
@@ -749,6 +760,19 @@
 				$.powerTip.hide( this );
 				self._pause = false;
 			} );
+		},
+
+		reset: function() {
+			var self = this;
+			self._selected = {
+				index: null,
+				shard: null
+			};
+			self._hover = {
+				index: null,
+				shard: null
+			};
+			self._is_refreshing = false;
 		},
 
 		_write_out_info_cells: function( index, shard, tr_index, tr_shard ) {
