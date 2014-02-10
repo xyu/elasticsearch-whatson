@@ -1366,7 +1366,7 @@
 		_svg_padding_x: 40,
 		_svg_padding_y: 20,
 		_svg_width: 390,
-		_svg_height: 120,
+		_svg_height: 150,
 		_segment_size: {
 			min: 0,
 			max: 0
@@ -1570,7 +1570,7 @@
 					.clamp( true )
 					.nice()
 					.range( [ self._svg_height, 0 ] )
-					.domain( [ Math.max( 1, self._segment_size.min / 2 ), self._segment_size.max ] ),
+					.domain( [ Math.max( 1, self._segment_size.min ), self._segment_size.max ] ),
 				segment_axis = d3
 					.svg
 					.axis()
