@@ -1295,8 +1295,10 @@
 
 			shard_legend
 				.append( "text" )
-				.attr( "x", 18 )
-				.attr( "dy", "1em" )
+				.attr( "x", 16 )
+				.attr( "dy", "-.25em" )
+				.attr( "dx", "0.5em" )
+				.attr("transform", "rotate(45)")
 				.text( function( d ) { return d3.format( '.2s' )( d ) + 'B' } );
 
 			// Delete ratio
