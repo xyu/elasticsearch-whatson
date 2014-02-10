@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+
+	<!-- Basic Page Needs
+  ================================================== -->
+	<meta charset="utf-8">
+	<title>Whatson - Elasticsearch Consulting Detective</title>
+	<meta name="description" content="An Elasticsearch Cluster Visualizer Powered by D3.js">
+	<meta name="author" content="Xiao Yu / @HypertextRanch / me@xyu.io">
+
+	<!-- Mobile Specific Metas
+  ================================================== -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<!-- CSS
+  ================================================== -->
+	<link rel="stylesheet" href="assets/css/base.css">
+	<link rel="stylesheet" href="assets/css/skeleton.css">
+	<link rel="stylesheet" href="assets/css/table.css">
+	<link rel="stylesheet" href="assets/css/layout.css">
+	<link rel="stylesheet" href="assets/css/font-awesome.css">
+	<link rel="stylesheet" href="assets/css/jquery.powertip.min.css">
+	<link rel="stylesheet" href="assets/css/app.css">
+
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<!-- Favicons
+	================================================== -->
+	<link rel="shortcut icon" href="assets/icon/favicon.ico">
+	<link rel="apple-touch-icon" href="assets/icon/apple-touch-icon.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="assets/icon/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="assets/icon/apple-touch-icon-114x114.png">
+
+</head>
+<body>
+
+	<!-- Primary Page Layout
+	================================================== -->
+
+	<div id="navbar">
+		<div class="container">
+			<div class="one-third column" id="navbar-appname">
+				<h1 class="remove-bottom"><i class="fa fa-search"> Whatson</i></h1>
+				<h5>Elasticsearch Consulting Detective</h5>
+			</div>
+			<div class="two-thirds column" id="navbar-clustername">
+				<span id="navbar-clustername-name"></span>
+				<a id="navbar-clustername-action" href="#" title="Change Cluster"><i id="navbar-clustername-statusicon" class="fa fa-fw"></i></a>
+			</div>
+			<div class="offset-by-nine seven columns" id="navbar-clusterconfig" style="display:none;">
+				<label for="navbar-clusterconfig-host">Elasticsearch Host</label>
+				<input id="navbar-clusterconfig-host" type="text" placeholder="protocol://host:port" />
+				<label for="navbar-clusterconfig-refresh">Refresh Interval</label>
+				<input id="navbar-clusterconfig-refresh" type="number" min="1" placeholder="seconds" />
+				<input id="navbar-clusterconfig-update" type="button" value="Save Configs" />
+			</div>
+		</div>
+	</div>
+
+	<div class="container">
+		<section id="nodes" class="sixteen columns add-bottom">
+			<h2 class="eleven columns alpha">Nodes <small></small></h2>
+			<div class="five columns omega">
+				<input id="nodes-filter" class="filter" type="text" placeholder="Filter Nodes" />
+			</div>
+			<div id="nodes-svg-container"><svg id="nodes-svg" /></div>
+			<div id="nodes-info-footer" class="info-footer">
+				<table class="condensed">
+					<thead>
+						<tr>
+							<th class="info-footer-name">Name</th>
+							<th class="info-footer-value">Version</th>
+							<th class="info-footer-value">Total Disk</th>
+							<th class="info-footer-value">Free</th>
+							<th class="info-footer-value">Index</th>
+							<th class="info-footer-value">Total Docs</th>
+							<th class="info-footer-value">Deleted</th>
+						</tr>
+					</thead>
+					<tbody class="inspect">
+						<tr>
+							<td class="info-footer-name col-name">&mdash;</td>
+							<td class="info-footer-value col-ver">&mdash;</td>
+							<td class="info-footer-value col-total">&mdash;</td>
+							<td class="info-footer-value col-free">&mdash;</td>
+							<td class="info-footer-value col-index">&mdash;</td>
+							<td class="info-footer-value col-docs">&mdash;</td>
+							<td class="info-footer-value col-ratio">&mdash;</td>
+						</tr>
+					</tbody>
+					<tbody class="totals">
+						<tr>
+							<td class="info-footer-name col-name">&mdash;</td>
+							<td class="info-footer-value col-ver">&mdash;</td>
+							<td class="info-footer-value col-total">&mdash;</td>
+							<td class="info-footer-value col-free">&mdash;</td>
+							<td class="info-footer-value col-index">&mdash;</td>
+							<td class="info-footer-value col-docs">&mdash;</td>
+							<td class="info-footer-value col-ratio">&mdash;</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</section>
+
+		<section id="indices" class="sixteen columns add-bottom">
+			<h2 class="eleven columns alpha">Indices &amp; Shards <small></small></h2>
+			<div class="five columns omega">
+				<input id="indices-filter" class="filter" type="text" placeholder="Filter Indices" />
+			</div>
+			<div id="indices-svg-container"><svg id="indices-svg" /></div>
+			<div id="indices-info-footer" class="info-footer">
+			<div class="info-footer">
+				<table class="condensed">
+					<thead>
+						<tr>
+							<th class="info-footer-name">&nbsp;</th>
+							<th class="info-footer-value">Shards</th>
+							<th class="info-footer-value">Primary Size</th>
+							<th class="info-footer-value">Total Size</th>
+							<th class="info-footer-value">Primary Docs</th>
+							<th class="info-footer-value">Deleted</th>
+						</tr>
+					</thead>
+					<tbody class="inspect">
+						<tr class="index">
+							<td class="info-footer-name col-name"><strong>Index:</strong> &mdash;</td>
+							<td class="info-footer-value col-status">&mdash;</td>
+							<td class="info-footer-value col-size-primary">&mdash;</td>
+							<td class="info-footer-value col-size-total">&mdash;</td>
+							<td class="info-footer-value col-docs">&mdash;</td>
+							<td class="info-footer-value col-ratio">&mdash;</td>
+						</tr>
+						<tr class="shard">
+							<td class="info-footer-name col-name"><strong>Shard:</strong> &mdash;</td>
+							<td class="info-footer-value col-status">&mdash;</td>
+							<td class="info-footer-value col-size-primary">&mdash;</td>
+							<td class="info-footer-value col-size-total">&mdash;</td>
+							<td class="info-footer-value col-docs">&mdash;</td>
+							<td class="info-footer-value col-ratio">&mdash;</td>
+						</tr>
+					</tbody>
+					<tbody class="monitor">
+						<tr class="index">
+							<td class="info-footer-name col-name"><strong>Index:</strong> &mdash;</td>
+							<td class="info-footer-value col-status">&mdash;</td>
+							<td class="info-footer-value col-size-primary">&mdash;</td>
+							<td class="info-footer-value col-size-total">&mdash;</td>
+							<td class="info-footer-value col-docs">&mdash;</td>
+							<td class="info-footer-value col-ratio">&mdash;</td>
+						</tr>
+						<tr class="shard">
+							<td class="info-footer-name col-name"><strong>Shard:</strong> &mdash;</td>
+							<td class="info-footer-value col-status">&mdash;</td>
+							<td class="info-footer-value col-size-primary">&mdash;</td>
+							<td class="info-footer-value col-size-total">&mdash;</td>
+							<td class="info-footer-value col-docs">&mdash;</td>
+							<td class="info-footer-value col-ratio">&mdash;</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</section>
+
+		<section id="segments" class="sixteen columns add-bottom">
+			<h2>Segments <small>(Select an Index or Shard Above)</small></h2>
+			<div id="segments-rendered"></div>
+		</section>
+
+		<section id="footer" class="sixteen columns add-bottom">
+			<small>Watson &mdash; Elasticsearch Consulting Detective &mdash; &copy; 2014 <a href="http://xyu.io">xyu.io</a></small>
+		</section>
+
+	</div><!-- container -->
+
+	<script type="text/javascript" charset="utf-8" src="assets/js/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" charset="utf-8" src="assets/js/jquery.powertip.min.js"></script>
+	<script type="text/javascript" charset="utf-8" src="assets/js/underscore-min.js"></script>
+	<script type="text/javascript" charset="utf-8" src="assets/js/d3.v3.min.js"></script>
+	<script type="text/javascript" charset="utf-8" src="assets/js/app.js"></script>
+
+<!-- End Document
+================================================== -->
+</body>
+</html>

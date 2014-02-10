@@ -1,0 +1,153 @@
+/**
+ * | Color  | Code    | ShardRoutingState | ClusterHealthStatus | IndexShardState | Shard   | Disk    | Segment                      |
+ * | ------ | ------- | ----------------- | ------------------- | --------------- | ------- | ------- | ---------------------------- |
+ * | Red    | #d0363e | UNASSIGNED        | RED                 | CREATED         |         | Deleted |                              |
+ * | Orange | #ef6642 | INITIALIZING      |                     | RECOVERING      |         |         |                              |
+ * | Yellow | #f0c556 | RELOCATING        | YELLOW              | POST_RECOVERY   |         |         | Uncommitted (search)         |
+ * | Green  | #74b73f | STARTED (norm)    | GREEN               | STARTED (norm)  | Primary |         | Synced && Same as Primary    |
+ * | Blue   | #179fb0 |                   |                     |                 | Replica | Index   | Synced (committed && search) |
+ * | Brown  | #6a493b |                   |                     | RELOCATED       |         | System  | Committed (committed)        |
+ * | Black  | #2e2e2e |                   |                     | CLOSED          |         |         |                              |
+ * | Gray   | #eeeeee |                   |                     |                 |         | Free    |                              |
+ * | White  | #ffffff |                   |                     |                 |         |         |                              |
+ */
+
+h2 small {
+	font-size: .5em;
+	opacity: .5;
+}
+#navbar {
+	background: #2e2e2e;
+	padding: 20px 0;
+	margin-bottom: 40px;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+#navbar * {
+	color: #ffffff;
+}
+
+#navbar-clustername {
+	text-align: right;
+	font-size: 35px;
+	line-height: 74px;
+	margin-bottom: 0;
+}
+
+#navbar-clustername.status-green * {
+	color: #74b73f;
+}
+#navbar-clustername.status-green #navbar-clustername-statusicon:before {
+	content: "\f058";
+}
+#navbar-clustername.status-yellow * {
+	color: #f0c556;
+}
+#navbar-clustername.status-yellow #navbar-clustername-statusicon:before {
+	content: "\f06a";
+}
+#navbar-clustername.status-red * {
+	color: #d0363e;
+}
+#navbar-clustername.status-red #navbar-clustername-statusicon:before {
+	content: "\f057";
+}
+#navbar-clustername-action:hover #navbar-clustername-statusicon:before {
+	color: #ffffff;
+	content: "\f013";
+}
+#navbar-clustername-action #navbar-clustername-statusicon.configure:before {
+	color: #ffffff;
+	content: "\f139";
+}
+
+#navbar-clusterconfig input { color: #2e2e2e; width: 100% }
+#navbar-clusterconfig input#navbar-clusterconfig-update { width: auto; float: right; }
+
+.filter { float: right; }
+.filter::-webkit-input-placeholder::before { font-family: fontAwesome; content:' \f0b0  '; }
+.filter::-moz-placeholder::before  { font-family: fontAwesome; content:' \f0b0  '; } /* firefox 19+ */
+.filter:-ms-input-placeholder::before  { font-family: fontAwesome; content:' \f0b0  '; } /* ie */
+input.filter:-moz-placeholder::before  { font-family: fontAwesome; content:' \f0b0  '; }
+
+.info-footer { overflow: scroll; }
+.info-footer table * { white-space: nowrap; }
+.info-footer-value { width: 90px; }
+td.info-footer-value { text-align: right; }
+.info-footer-name strong { width: 45px; display: inline-block; }
+
+.node .disk { fill: none; stroke: none; stroke-width: 3px; }
+.node .free { fill: #eeeeee; }
+.node .system { fill: #6a493b; }
+.node .index { fill: #179fb0; }
+.node.shard-state-relocating .disk { stroke: #f0c556; }
+.node.shard-state-relocating .index { fill: #f0c556; }
+.node.shard-state-initializing .disk { stroke: #ef6642; }
+.node.shard-state-initializing .index { fill: #ef6642; }
+.node.shard-state-unassigned .disk { stroke: #d0363e; }
+.node.shard-state-unassigned .index { fill: #d0363e; }
+.node_ratio .line { stroke: #d0363e; }
+.node_ratio .line-point { fill: #d0363e; }
+
+div.hover svg .node { opacity: 0.6; }
+div.hover svg .node:hover { opacity: 1; }
+
+#nodes .info-footer tbody.totals { display: table-row-group; }
+#nodes.hover .info-footer tbody.totals { display: none; }
+#nodes .info-footer tbody.inspect { display: none; }
+#nodes.hover .info-footer tbody.inspect { display: table-row-group; }
+
+.index.status-green rect { fill: #74b73f; }
+.index.status-yellow rect { fill: #f0c556; }
+.index.status-red rect { fill: #d0363e; }
+.index rect.total { opacity: 0.5; }
+.index_ratio .line { stroke: #d0363e; }
+.index_ratio .line-point { fill: #d0363e; }
+
+div.hover svg .index { opacity: 0.6; }
+div.hover svg .index:hover { opacity: 1; }
+
+div.hover svg .shard { opacity: 0.6; }
+div.hover svg .shard:hover { opacity: 1; }
+
+td.info-footer-value.col-status { text-align: left; width: 135px; }
+
+div.selected svg .shard,
+div.selected svg .shard:hover,
+div.selected svg .index,
+div.selected svg .index:hover { opacity: 0.25; }
+div.selected svg .index.selected,
+div.selected svg .shard.selected { opacity: 1; }
+
+#indices .info-footer tbody.monitor { display: none; }
+#indices.selected .info-footer tbody.monitor { display: table-row-group; }
+#indices .info-footer tbody.inspect { display: table-row-group; }
+#indices.selected .info-footer tbody.inspect { display: none; }
+
+.segment.synced-primary rect { fill: #74b73f; }
+.segment.synced-local rect { fill: #179fb0; }
+.segment.committed rect { fill: #6a493b; }
+.segment.uncommitted rect { fill: #f0c556; }
+
+.axis path,
+.axis line {
+	fill: none;
+	stroke: #2e2e2e;
+	shape-rendering: crispEdges;
+}
+.axis text,
+.shard-legend text {
+	font-size: .75em;
+}
+
+.line {
+	fill: none;
+	stroke: #2e2e2e;
+	stroke-width: 1.5px;
+}
+
+#footer { padding-top: 2em; }
+
+#powerTip { font-size: 11px; line-height: 14px; }
+#powerTip strong { color: #fff; font-weight: bold; display: block; border-bottom: 1px solid #eee; }
