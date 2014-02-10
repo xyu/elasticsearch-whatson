@@ -1043,7 +1043,8 @@
 					.domain( [ 0, d3.max( indices.indices, function(d) { return d.number_of_shards; } ) ] ),
 				shard_bytes = d3
 					.scale
-					.linear()
+					.pow()
+					.exponent( 2 )
 					.range( [ "#eeeeee", "#179fb0" ] )
 					.domain( [
 						0,
