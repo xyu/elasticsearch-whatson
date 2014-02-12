@@ -90,13 +90,23 @@ td.info-footer-value { text-align: right; }
 .node_ratio .line { stroke: #d0363e; }
 .node_ratio .line-point { fill: #d0363e; }
 
-div.hover svg .node { opacity: 0.6; }
-div.hover svg .node:hover { opacity: 1; }
+div#nodes-svg-container.hover svg .node { opacity: 0.6; }
+div#nodes-svg-container.hover svg .node:hover { opacity: 1; cursor: pointer; }
+
+div#nodes-svg-container.selected svg .node { opacity: 0.25; }
+div#nodes-svg-container.selected svg .node.selected { opacity: 1; cursor: pointer; }
 
 #nodes .info-footer tbody.totals { display: table-row-group; }
-#nodes.hover .info-footer tbody.totals { display: none; }
 #nodes .info-footer tbody.inspect { display: none; }
+#nodes .info-footer tbody.monitor { display: none; }
+
+#nodes.hover .info-footer tbody.totals { display: none; }
 #nodes.hover .info-footer tbody.inspect { display: table-row-group; }
+#nodes.hover .info-footer tbody.monitor { display: none; }
+
+#nodes.selected .info-footer tbody.totals { display: none; }
+#nodes.selected .info-footer tbody.inspect { display: none; }
+#nodes.selected .info-footer tbody.monitor { display: table-row-group; }
 
 .index.status-green rect { fill: #74b73f; }
 .index.status-yellow rect { fill: #f0c556; }
@@ -105,25 +115,23 @@ div.hover svg .node:hover { opacity: 1; }
 .index_ratio .line { stroke: #d0363e; }
 .index_ratio .line-point { fill: #d0363e; }
 
-div.hover svg .index { opacity: 0.6; }
-div.hover svg .index:hover { opacity: 1; }
-
-div.hover svg .shard { opacity: 0.6; }
-div.hover svg .shard:hover { opacity: 1; }
-
 td.info-footer-value.col-status { text-align: left; width: 135px; }
 
-div.selected svg .shard,
-div.selected svg .shard:hover,
-div.selected svg .index,
-div.selected svg .index:hover { opacity: 0.25; }
-div.selected svg .index.selected,
-div.selected svg .shard.selected { opacity: 1; }
+div#indices-svg-container.hover svg .index,
+div#indices-svg-container.hover svg .shard { opacity: 0.6; }
+div#indices-svg-container.hover svg .index:hover,
+div#indices-svg-container.hover svg .shard:hover { opacity: 1; cursor: pointer; }
 
-#indices .info-footer tbody.monitor { display: none; }
-#indices.selected .info-footer tbody.monitor { display: table-row-group; }
+div#indices-svg-container.selected svg .shard,
+div#indices-svg-container.selected svg .index { opacity: 0.25; }
+div#indices-svg-container.selected svg .index.selected,
+div#indices-svg-container.selected svg .shard.selected { opacity: 1; cursor: pointer; }
+
 #indices .info-footer tbody.inspect { display: table-row-group; }
+#indices .info-footer tbody.monitor { display: none; }
+
 #indices.selected .info-footer tbody.inspect { display: none; }
+#indices.selected .info-footer tbody.monitor { display: table-row-group; }
 
 .segment.synced-primary rect { fill: #74b73f; }
 .segment.synced-local rect { fill: #179fb0; }

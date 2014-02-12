@@ -176,6 +176,7 @@
 		_svg_height: 260,
 		_nodes: {},
 		_node_shards: {},
+		_selected: null,
 		_hover: null,
 		_is_refreshing: false,
 		_last_update: null,
@@ -245,6 +246,7 @@
 
 		reset: function() {
 			var self = this;
+			self._selected = null;
 			self._hover = null;
 			self._is_refreshing = false;
 		},
@@ -359,6 +361,13 @@
 
 			self._update_cluster_totals();
 
+			if ( null != self._selected ) {
+				self._write_out_info_cells(
+					self._nodes[ self._selected ],
+					$( '#nodes-info-footer tbody.monitor tr' )
+				);
+			}
+
 			if ( null != self._hover ) {
 				self._write_out_info_cells(
 					self._nodes[ self._hover ],
@@ -400,7 +409,36 @@
 					.scale( ratio_y )
 					.orient( "right" )
 					.ticks( 5 )
-					.tickFormat( function(d) { return Math.round( d * 100 ) + '%' } );
+					.tickFormat( function(d) { return Math.round( d * 100 ) + '%' } ),
+				click_event = function( element, d ) {
+					var e = d3.event,
+						g = element.parentNode,
+						isSelected = d3.select( g ).classed( "selected" );
+
+					// Unselect everything else
+					d3.selectAll( 'g.selected' ).classed( "selected", false );
+					// Toggle select
+					d3.select( g ).classed( "selected", !isSelected );
+
+					if ( !isSelected ) {
+						$( '#nodes-svg-container' ).addClass( 'selected' );
+						$( '#nodes' ).addClass( 'selected' );
+						self._selected = d.id;
+						self._write_out_info_cells(
+							self._nodes[ d.id ],
+							$( '#nodes-info-footer tbody.monitor tr' )
+						);
+					} else {
+						$( '#nodes-svg-container' ).removeClass( 'selected' );
+						$( '#nodes' ).removeClass( 'selected' );
+						self._selected = null;
+						self._write_out_info_cells(
+							null,
+							$( '#nodes-info-footer tbody.monitor tr' )
+						);
+					}
+				};
+
 
 			$( '#nodes h2 small' ).text(
 				'(' +
@@ -432,6 +470,9 @@
 							class_names += ' shard-state-initializing';
 						if ( self._node_shards[ d.id ].RELOCATING.length )
 							class_names += ' shard-state-relocating';
+					}
+					if ( self._selected == d.id ) {
+						class_names += ' selected';
 					}
 					return class_names
 				} )
@@ -472,7 +513,10 @@
 					tooltip += '<br>' + d3.format( '.3s' )( d.docs.deleted_ratio * 100 ) + '% Deleted';
 					return tooltip;
 				} )
-				.classed( { 'index': true } );
+				.classed( { 'index': true } )
+				.on( "click", function( d ) {
+					click_event( this, d );
+				} );
 
 			// System size
 			node_g
@@ -492,7 +536,10 @@
 					tooltip += d3.format( '.3s' )( d.size.system ) + 'B Other';
 					return tooltip;
 				} )
-				.classed( { 'system': true } );
+				.classed( { 'system': true } )
+				.on( "click", function( d ) {
+					click_event( this, d );
+				} );
 
 			// Free disk
 			node_g
@@ -512,7 +559,10 @@
 					tooltip += d3.format( '.3s' )( d.size.free ) + 'B Free';
 					return tooltip;
 				} )
-				.classed( { 'free': true } );
+				.classed( { 'free': true } )
+				.on( "click", function( d ) {
+					click_event( this, d );
+				} );
 
 			self._svg
 				.append("g")
