@@ -12,10 +12,8 @@
  * | White  | #ffffff |                   |                     |                 |         |         |                              |
  */
 
-h2 small {
-	font-size: .5em;
-	opacity: .5;
-}
+/* Top Bar */
+
 #navbar {
 	background: #2e2e2e;
 	padding: 20px 0;
@@ -23,18 +21,15 @@ h2 small {
 	white-space: nowrap;
 	text-overflow: ellipsis;
 }
-
 #navbar * {
 	color: #ffffff;
 }
-
 #navbar-clustername {
 	text-align: right;
 	font-size: 35px;
 	line-height: 74px;
 	margin-bottom: 0;
 }
-
 #navbar-clustername.status-green * {
 	color: #74b73f;
 }
@@ -61,83 +56,40 @@ h2 small {
 	color: #ffffff;
 	content: "\f139";
 }
+#navbar-clusterconfig input {
+	color: #2e2e2e;
+	width: 100%;
+}
+#navbar-clusterconfig input#navbar-clusterconfig-update {
+	width: auto;
+	float: right;
+}
 
-#navbar-clusterconfig input { color: #2e2e2e; width: 100% }
-#navbar-clusterconfig input#navbar-clusterconfig-update { width: auto; float: right; }
+/* General */
 
-.filter { float: right; }
-.filter::-webkit-input-placeholder::before { font-family: fontAwesome; content:' \f0b0  '; }
-.filter::-moz-placeholder::before  { font-family: fontAwesome; content:' \f0b0  '; } /* firefox 19+ */
-.filter:-ms-input-placeholder::before  { font-family: fontAwesome; content:' \f0b0  '; } /* ie */
-input.filter:-moz-placeholder::before  { font-family: fontAwesome; content:' \f0b0  '; }
-
-.info-footer { overflow: scroll; }
-.info-footer table * { white-space: nowrap; }
-.info-footer-value { width: 90px; }
-td.info-footer-value { text-align: right; }
-.info-footer-name strong { width: 45px; display: inline-block; }
-
-.node .disk { fill: none; stroke: none; stroke-width: 3px; }
-.node .free { fill: #eeeeee; }
-.node .system { fill: #6a493b; }
-.node .index { fill: #179fb0; }
-.node.shard-state-relocating .disk { stroke: #f0c556; }
-.node.shard-state-relocating .index { fill: #f0c556; }
-.node.shard-state-initializing .disk { stroke: #ef6642; }
-.node.shard-state-initializing .index { fill: #ef6642; }
-.node.shard-state-unassigned .disk { stroke: #d0363e; }
-.node.shard-state-unassigned .index { fill: #d0363e; }
-.node_ratio .line { stroke: #d0363e; }
-.node_ratio .line-point { fill: #d0363e; }
-
-div#nodes-svg-container.hover svg .node { opacity: 0.6; }
-div#nodes-svg-container.hover svg .node:hover { opacity: 1; cursor: pointer; }
-
-div#nodes-svg-container.selected svg .node { opacity: 0.25; }
-div#nodes-svg-container.selected svg .node.selected { opacity: 1; cursor: pointer; }
-
-#nodes .info-footer tbody.totals { display: table-row-group; }
-#nodes .info-footer tbody.inspect { display: none; }
-#nodes .info-footer tbody.monitor { display: none; }
-
-#nodes.hover .info-footer tbody.totals { display: none; }
-#nodes.hover .info-footer tbody.inspect { display: table-row-group; }
-#nodes.hover .info-footer tbody.monitor { display: none; }
-
-#nodes.selected .info-footer tbody.totals { display: none; }
-#nodes.selected .info-footer tbody.inspect { display: none; }
-#nodes.selected .info-footer tbody.monitor { display: table-row-group; }
-
-.index.status-green rect { fill: #74b73f; }
-.index.status-yellow rect { fill: #f0c556; }
-.index.status-red rect { fill: #d0363e; }
-.index rect.total { opacity: 0.5; }
-.index_ratio .line { stroke: #d0363e; }
-.index_ratio .line-point { fill: #d0363e; }
-
-td.info-footer-value.col-status { text-align: left; width: 135px; }
-
-div#indices-svg-container.hover svg .index,
-div#indices-svg-container.hover svg .shard { opacity: 0.6; }
-div#indices-svg-container.hover svg .index:hover,
-div#indices-svg-container.hover svg .shard:hover { opacity: 1; cursor: pointer; }
-
-div#indices-svg-container.selected svg .shard,
-div#indices-svg-container.selected svg .index { opacity: 0.25; }
-div#indices-svg-container.selected svg .index.selected,
-div#indices-svg-container.selected svg .shard.selected { opacity: 1; cursor: pointer; }
-
-#indices .info-footer tbody.inspect { display: table-row-group; }
-#indices .info-footer tbody.monitor { display: none; }
-
-#indices.selected .info-footer tbody.inspect { display: none; }
-#indices.selected .info-footer tbody.monitor { display: table-row-group; }
-
-.segment.synced-primary rect { fill: #74b73f; }
-.segment.synced-local rect { fill: #179fb0; }
-.segment.committed rect { fill: #6a493b; }
-.segment.uncommitted rect { fill: #f0c556; }
-
+h2 small {
+	font-size: .5em;
+	opacity: .5;
+}
+.filter {
+	float: right
+}
+.filter::-webkit-input-placeholder::before {
+	font-family: fontAwesome;
+	content: ' \f0b0  ';
+}
+.filter::-moz-placeholder::before {
+	font-family: fontAwesome;
+	content: ' \f0b0  ';
+} /* firefox 19+  */
+.filter:-ms-input-placeholder::before {
+	font-family: fontAwesome;
+	content: ' \f0b0  ';
+} /* ie  */
+input.filter:-moz-placeholder::before {
+	font-family: fontAwesome;
+	content: ' \f0b0  ';
+}
 .axis path,
 .axis line {
 	fill: none;
@@ -148,14 +100,192 @@ div#indices-svg-container.selected svg .shard.selected { opacity: 1; cursor: poi
 .shard-legend text {
 	font-size: .75em;
 }
-
 .line {
 	fill: none;
 	stroke: #2e2e2e;
 	stroke-width: 1.5px;
 }
+.info-footer {
+	overflow: scroll;
+}
+.info-footer table * {
+	white-space: nowrap;
+}
+.info-footer-value {
+	width: 90px;
+}
+td.info-footer-value {
+	text-align: right;
+}
+.info-footer-name strong {
+	width: 45px;
+	display: inline-block;
+}
+#footer {
+	padding-top: 2em;
+}
+#powerTip {
+	font-size: 11px;
+	line-height: 14px;
+}
+#powerTip strong {
+	color: #fff;
+	font-weight: bold;
+	display: block;
+	border-bottom: 1px solid #eee;
+}
 
-#footer { padding-top: 2em; }
+/* Nodes Section */
 
-#powerTip { font-size: 11px; line-height: 14px; }
-#powerTip strong { color: #fff; font-weight: bold; display: block; border-bottom: 1px solid #eee; }
+.node .disk {
+	fill: none;
+	stroke: none;
+	stroke-width: 3px;
+}
+.node .free {
+	fill: #eeeeee;
+}
+.node .system {
+	fill: #6a493b;
+}
+.node .index {
+	fill: #179fb0;
+}
+.node.shard-state-relocating .disk {
+	stroke: #f0c556;
+}
+.node.shard-state-relocating .index {
+	fill: #f0c556;
+}
+.node.shard-state-initializing .disk {
+	stroke: #ef6642;
+}
+.node.shard-state-initializing .index {
+	fill: #ef6642;
+}
+.node.shard-state-unassigned .disk {
+	stroke: #d0363e;
+}
+.node.shard-state-unassigned .index {
+	fill: #d0363e;
+}
+.node_ratio .line {
+	stroke: #d0363e;
+}
+.node_ratio .line-point {
+	fill: #d0363e;
+}
+
+div#nodes-svg-container.hover svg .node {
+	opacity: 0.6;
+}
+div#nodes-svg-container.hover svg .node:hover {
+	opacity: 1;
+	cursor: pointer;
+}
+div#nodes-svg-container.selected svg .node {
+	opacity: 0.25;
+}
+div#nodes-svg-container.selected svg .node.selected {
+	opacity: 1;
+	cursor: pointer;
+}
+#nodes .info-footer tbody.totals {
+	display: table-row-group;
+}
+#nodes .info-footer tbody.inspect {
+	display: none;
+}
+#nodes .info-footer tbody.monitor {
+	display: none;
+}
+#nodes.hover .info-footer tbody.totals {
+	display: none;
+}
+#nodes.hover .info-footer tbody.inspect {
+	display: table-row-group;
+}
+#nodes.hover .info-footer tbody.monitor {
+	display: none;
+}
+#nodes.selected .info-footer tbody.totals {
+	display: none;
+}
+#nodes.selected .info-footer tbody.inspect {
+	display: none;
+}
+#nodes.selected .info-footer tbody.monitor {
+	display: table-row-group;
+}
+
+/* Indices & Shards Section */
+
+td.info-footer-value.col-status {
+	text-align: left;
+	width: 135px;
+}
+.index.status-green rect {
+	fill: #74b73f;
+}
+.index.status-yellow rect {
+	fill: #f0c556;
+}
+.index.status-red rect {
+	fill: #d0363e;
+}
+.index rect.total {
+	opacity: 0.5;
+}
+.index_ratio .line {
+	stroke: #d0363e;
+}
+.index_ratio .line-point {
+	fill: #d0363e;
+}
+div#indices-svg-container.hover svg .index,
+div#indices-svg-container.hover svg .shard {
+	opacity: 0.6;
+}
+div#indices-svg-container.hover svg .index:hover,
+div#indices-svg-container.hover svg .shard:hover {
+	opacity: 1;
+	cursor: pointer;
+}
+div#indices-svg-container.selected svg .shard,
+div#indices-svg-container.selected svg .index {
+	opacity: 0.25;
+}
+div#indices-svg-container.selected svg .index.selected,
+div#indices-svg-container.selected svg .shard.selected {
+	opacity: 1;
+	cursor: pointer;
+}
+#indices .info-footer tbody.inspect {
+	display: table-row-group;
+}
+#indices .info-footer tbody.monitor {
+	display: none;
+}
+#indices.selected .info-footer tbody.inspect {
+	display: none;
+}
+#indices.selected .info-footer tbody.monitor {
+	display: table-row-group;
+}
+
+/* Segment Section */
+
+.segment.synced-primary rect {
+	fill: #74b73f;
+}
+.segment.synced-local rect {
+	fill: #179fb0;
+}
+.segment.committed rect {
+	fill: #6a493b;
+}
+.segment.uncommitted rect {
+	fill: #f0c556;
+}
+
+
