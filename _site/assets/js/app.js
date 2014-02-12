@@ -366,6 +366,7 @@
 					self._nodes[ self._selected ],
 					$( '#nodes-info-footer tbody.monitor tr' )
 				);
+				self._highlighted_shards_for_node( self._selected );
 			}
 
 			if ( null != self._hover ) {
@@ -428,6 +429,7 @@
 							self._nodes[ d.id ],
 							$( '#nodes-info-footer tbody.monitor tr' )
 						);
+						self._highlighted_shards_for_node( d.id );
 					} else {
 						$( '#nodes-svg-container' ).removeClass( 'selected' );
 						$( '#nodes' ).removeClass( 'selected' );
@@ -436,6 +438,8 @@
 							null,
 							$( '#nodes-info-footer tbody.monitor tr' )
 						);
+
+						self._highlighted_shards_for_node( null );
 					}
 				};
 
@@ -603,6 +607,37 @@
 				.call(ratio_axis);
 		},
 
+		_highlighted_shards_for_node: function( node_id ) {
+			var self = this,
+				node_shards = self._node_shards,
+				highlight_shards = {};
+
+			if ( null == node_id || undefined == node_shards[ node_id ] ) {
+				indices.set_highlight_shards( {} );
+			}
+
+			_.each(
+				_.union(
+					node_shards[ node_id ].INITIALIZING,
+					node_shards[ node_id ].RELOCATING,
+					node_shards[ node_id ].STARTED
+				),
+				function( shard_instance ) {
+					if ( undefined == highlight_shards[ shard_instance.index ] ) {
+						highlight_shards[ shard_instance.index ] = {};
+					}
+					if ( undefined == highlight_shards[ shard_instance.index ][ shard_instance.shard ] ) {
+						highlight_shards[ shard_instance.index ][ shard_instance.shard ] = 'R';
+					}
+					if ( shard_instance.primary ) {
+						highlight_shards[ shard_instance.index ][ shard_instance.shard ] = 'P';
+					}
+				}
+			);
+
+			indices.set_highlight_shards( highlight_shards );
+		},
+
 		_get_filtered_nodes: function() {
 			var self = this;
 			var counts = {
@@ -696,6 +731,7 @@
 			index: null,
 			shard: null
 		},
+		_highlight_shards: {},
 		_pause: false,
 
 		init: function() {
@@ -822,6 +858,7 @@
 				index: null,
 				shard: null
 			};
+			self._highlight_shards = {};
 			self._is_refreshing = false;
 		},
 
@@ -1067,6 +1104,13 @@
 				}
 			}
 
+			// Set highlight state
+			if ( 0 == _.keys( self._highlight_shards ).length ) {
+				$( '#indices-svg-container' ).removeClass( 'highlight_shards' );
+			} else {
+				$( '#indices-svg-container' ).addClass( 'highlight_shards' );
+			}
+
 			var indices = self._get_filtered_indices(),
 				svg_index_height = 100,
 				index_x = d3
@@ -1244,6 +1288,16 @@
 						var classes = 'shard shard-' + index.id;
 						if ( self._selected.index == index.id && self._selected.shard == d.shard_num )
 							classes += ' selected';
+
+						// Highlight selection
+						if ( undefined != self._highlight_shards[ index.id ] && undefined != self._highlight_shards[ index.id ][ d.shard_num ] ) {
+							if ( 'P' == self._highlight_shards[ index.id ][ d.shard_num ] ) {
+								classes += ' highlight highlight-primary';
+							} else {
+								classes += ' highlight highlight-replica';
+							}
+						}
+
 						return classes;
 					} )
 					.attr( 'id', function(d) { return 'shard-' + index.id + '-' + d.shard_num; } );
@@ -1261,9 +1315,12 @@
 						return shard_h( 1 );
 					} )
 					.style( "fill", function( d ) {
-						if ( 'green' == d.status )
+						// Heatmap!
+						if ( 'green' == d.status ) {
 							return shard_bytes( d.size.primary );
+						}
 
+						// Highlight problems
 						var shard_states = {
 							'UNASSIGNED': false,
 							'INITIALIZING': false,
@@ -1379,6 +1436,12 @@
 				.attr("class", "y axis")
 				.attr("transform", "translate("+(self._svg_width+self._svg_padding_x)+","+self._svg_padding_y+")")
 				.call(ratio_axis);
+		},
+
+		set_highlight_shards: function( highlight_shards ) {
+			var self = this;
+			self._highlight_shards = highlight_shards;
+			self.render();
 		},
 
 		_get_filtered_indices: function() {
