@@ -1161,7 +1161,7 @@
 						isSelected = d3.select( this ).classed( "selected" );
 
 					// Unselect everything else
-					d3.selectAll( 'g.selected' ).classed( "selected", false );
+					d3.selectAll( '#indices g.selected' ).classed( "selected", false );
 					// Toggle select
 					d3.select( this ).classed( "selected", !isSelected );
 
@@ -1295,7 +1295,7 @@
 							isSelected = d3.select( g ).classed( "selected" );
 
 						// Unselect everything else
-						d3.selectAll( 'g.selected' ).classed( "selected", false );
+						d3.selectAll( '#indices g.selected' ).classed( "selected", false );
 						// Toggle select
 						d3.select( g ).classed( "selected", !isSelected );
 
