@@ -1586,8 +1586,6 @@
 				$.getJSON( cluster.get_info().host + '/' + index + '/_segments' )
 			)
 			.done(function( results ) {
-				if ( ! results.ok )
-					return;
 
 				if ( null == shard_num ) {
 					var shards = results.indices[ index ][ 'shards' ];
