@@ -4,7 +4,12 @@
 		_info: {
 			host: '',
 			name: 'Not Connected',
-			status: 'red'
+			status: 'red',
+			version: {
+				major: null,
+				minor: null,
+				patch: null
+			}
 		},
 		_is_refreshing: false,
 		_last_update: null,
@@ -108,26 +113,33 @@
 			self._is_refreshing = true;
 
 			$.when(
+				$.getJSON( cluster.get_info().host + '/' ),
 				$.getJSON( cluster.get_info().host + '/_cluster/health' )
 			)
-			.done(function( result_health ) {
-				switch( result_health.status ) {
+			.done(function( result_root, result_health ) {
+				// Get version
+				self._info.version = _.object(
+					['major','minor','patch'],
+					result_root[0].version.number.split('.')
+				);
+
+				switch( result_health[0].status ) {
 					case 'green':
 						self.set_info( {
 							'status': 'green',
-							'name': result_health.cluster_name
+							'name': result_health[0].cluster_name
 						} );
 						break;
 					case 'yellow':
 						self.set_info( {
 							'status': 'yellow',
-							'name': result_health.cluster_name
+							'name': result_health[0].cluster_name
 						} );
 						break;
 					case 'red':
 						self.set_info( {
 							'status': 'red',
-							'name': result_health.cluster_name
+							'name': result_health[0].cluster_name
 						} );
 						break;
 					default:
