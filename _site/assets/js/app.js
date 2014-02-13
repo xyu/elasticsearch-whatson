@@ -302,9 +302,21 @@
 
 			self._is_refreshing = true;
 
+			var endpoints = [
+				cluster.get_info().host + '/_nodes/_all/attributes',
+				cluster.get_info().host + '/_nodes/stats/indices,fs'
+			];
+
+			if ( 0 == cluster.get_info().version.major ) {
+				endpoints = [
+					cluster.get_info().host + '/_nodes',
+					cluster.get_info().host + '/_nodes/stats?fs=true'
+				];
+			}
+
 			$.when(
-				$.getJSON( cluster.get_info().host + '/_nodes' ),
-				$.getJSON( cluster.get_info().host + '/_nodes/stats?fs=true' )
+				$.getJSON( endpoints[0] ),
+				$.getJSON( endpoints[1] )
 			)
 			.done(function( result_nodes, result_nodes_stats ) {
 
