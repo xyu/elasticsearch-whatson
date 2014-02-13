@@ -316,8 +316,11 @@
 				_.each( result_nodes_stats[0].nodes, function( node, node_id ) {
 					var data = _.pick(
 						node,
-						[ 'name', 'transport_address', 'hostname', 'attributes' ]
+						[ 'name', 'transport_address', 'host', 'attributes' ]
 					);
+
+					if ( 0 == cluster.get_info().version.major )
+						data.host = node.hostname;
 
 					data.size = {
 						'disk': node.fs.total.total_in_bytes,
@@ -334,7 +337,7 @@
 
 					// Set metadata
 					data.id = node_id;
-					data.sortkey = data.hostname.split('.').reverse().join('.') + ' ' + data.name;
+					data.sortkey = data.host.split('.').reverse().join('.') + ' ' + data.name;
 
 					self._nodes[ node_id ] = _.defaults( data, self._nodes[ node_id ] );
 				} );
