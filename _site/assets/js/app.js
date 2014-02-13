@@ -4,7 +4,12 @@
 		_info: {
 			host: '',
 			name: 'Not Connected',
-			status: 'red'
+			status: 'red',
+			version: {
+				major: null,
+				minor: null,
+				patch: null
+			}
 		},
 		_is_refreshing: false,
 		_last_update: null,
@@ -108,26 +113,33 @@
 			self._is_refreshing = true;
 
 			$.when(
+				$.getJSON( cluster.get_info().host + '/' ),
 				$.getJSON( cluster.get_info().host + '/_cluster/health' )
 			)
-			.done(function( result_health ) {
-				switch( result_health.status ) {
+			.done(function( result_root, result_health ) {
+				// Get version
+				self._info.version = _.object(
+					['major','minor','patch'],
+					result_root[0].version.number.split('.')
+				);
+
+				switch( result_health[0].status ) {
 					case 'green':
 						self.set_info( {
 							'status': 'green',
-							'name': result_health.cluster_name
+							'name': result_health[0].cluster_name
 						} );
 						break;
 					case 'yellow':
 						self.set_info( {
 							'status': 'yellow',
-							'name': result_health.cluster_name
+							'name': result_health[0].cluster_name
 						} );
 						break;
 					case 'red':
 						self.set_info( {
 							'status': 'red',
-							'name': result_health.cluster_name
+							'name': result_health[0].cluster_name
 						} );
 						break;
 					default:
@@ -290,9 +302,21 @@
 
 			self._is_refreshing = true;
 
+			var endpoints = [
+				cluster.get_info().host + '/_nodes/_all/attributes',
+				cluster.get_info().host + '/_nodes/stats/indices,fs'
+			];
+
+			if ( 0 == cluster.get_info().version.major ) {
+				endpoints = [
+					cluster.get_info().host + '/_nodes',
+					cluster.get_info().host + '/_nodes/stats?fs=true'
+				];
+			}
+
 			$.when(
-				$.getJSON( cluster.get_info().host + '/_nodes' ),
-				$.getJSON( cluster.get_info().host + '/_nodes/stats?fs=true' )
+				$.getJSON( endpoints[0] ),
+				$.getJSON( endpoints[1] )
 			)
 			.done(function( result_nodes, result_nodes_stats ) {
 
@@ -304,8 +328,11 @@
 				_.each( result_nodes_stats[0].nodes, function( node, node_id ) {
 					var data = _.pick(
 						node,
-						[ 'name', 'transport_address', 'hostname', 'attributes' ]
+						[ 'name', 'transport_address', 'host', 'attributes' ]
 					);
+
+					if ( 0 == cluster.get_info().version.major )
+						data.host = node.hostname;
 
 					data.size = {
 						'disk': node.fs.total.total_in_bytes,
@@ -322,7 +349,7 @@
 
 					// Set metadata
 					data.id = node_id;
-					data.sortkey = data.hostname.split('.').reverse().join('.') + ' ' + data.name;
+					data.sortkey = data.host.split('.').reverse().join('.') + ' ' + data.name;
 
 					self._nodes[ node_id ] = _.defaults( data, self._nodes[ node_id ] );
 				} );
@@ -949,10 +976,24 @@
 
 			self._is_refreshing = true;
 
+			var endpoints = [
+				cluster.get_info().host + '/_cluster/health?level=shards',
+				cluster.get_info().host + '/_cluster/state/master_node,routing_table',
+				cluster.get_info().host + '/_status?recovery=true'
+			];
+
+			if ( 0 == cluster.get_info().version.major ) {
+				endpoints = [
+					cluster.get_info().host + '/_cluster/health?level=shards',
+					cluster.get_info().host + '/_cluster/state?filter_blocks=true&filter_nodes=true&filter_metadata=true',
+					cluster.get_info().host + '/_status?recovery=true'
+				];
+			}
+
 			$.when(
-				$.getJSON( cluster.get_info().host + '/_cluster/health?level=shards' ),
-				$.getJSON( cluster.get_info().host + '/_cluster/state?filter_blocks=true&filter_nodes=true&filter_metadata=true' ),
-				$.getJSON( cluster.get_info().host + '/_status?recovery=true' )
+				$.getJSON( endpoints[0] ),
+				$.getJSON( endpoints[1] ),
+				$.getJSON( endpoints[2] )
 			)
 			.done(function( result_health, result_cluster_state, result_status ) {
 
@@ -1586,8 +1627,6 @@
 				$.getJSON( cluster.get_info().host + '/' + index + '/_segments' )
 			)
 			.done(function( results ) {
-				if ( ! results.ok )
-					return;
 
 				if ( null == shard_num ) {
 					var shards = results.indices[ index ][ 'shards' ];
