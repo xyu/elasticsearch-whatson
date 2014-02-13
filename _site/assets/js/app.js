@@ -1706,6 +1706,9 @@
 					d3.max( shard, function(d) { return _.keys( d.segments ).length; } )
 				);
 				_.each( shard, function( shard_instance, index ) {
+					if ( 0 == _.keys( shard_instance.segments ).length )
+						return;
+
 					if ( null == self._segment_size.min ) {
 						self._segment_size = {
 							min: d3.min( _.values( shard_instance.segments ), function(d) { return d.size_in_bytes; } ),
@@ -1724,6 +1727,8 @@
 				} );
 			} );
 
+			if ( self._segment_size.min == self._segment_size.max )
+				self._segment_size.min = 0;
 
 			_.each( shards, function( shard, shard_num ) {
 				_.each( shard, function( shard_instance, index ) {
