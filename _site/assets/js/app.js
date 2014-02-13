@@ -976,10 +976,24 @@
 
 			self._is_refreshing = true;
 
+			var endpoints = [
+				cluster.get_info().host + '/_cluster/health?level=shards',
+				cluster.get_info().host + '/_cluster/state/master_node,routing_table',
+				cluster.get_info().host + '/_status?recovery=true'
+			];
+
+			if ( 0 == cluster.get_info().version.major ) {
+				endpoints = [
+					cluster.get_info().host + '/_cluster/health?level=shards',
+					cluster.get_info().host + '/_cluster/state?filter_blocks=true&filter_nodes=true&filter_metadata=true',
+					cluster.get_info().host + '/_status?recovery=true'
+				];
+			}
+
 			$.when(
-				$.getJSON( cluster.get_info().host + '/_cluster/health?level=shards' ),
-				$.getJSON( cluster.get_info().host + '/_cluster/state?filter_blocks=true&filter_nodes=true&filter_metadata=true' ),
-				$.getJSON( cluster.get_info().host + '/_status?recovery=true' )
+				$.getJSON( endpoints[0] ),
+				$.getJSON( endpoints[1] ),
+				$.getJSON( endpoints[2] )
 			)
 			.done(function( result_health, result_cluster_state, result_status ) {
 
