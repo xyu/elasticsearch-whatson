@@ -136,6 +136,7 @@ td.info-footer-value {
 	font-weight: bold;
 	display: block;
 	border-bottom: 1px solid #eee;
+	margin-bottom: 0.25em;
 }
 
 /* Nodes Section */
