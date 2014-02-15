@@ -76,3 +76,15 @@ blog post by Mike McCandless. The bars are color coded as follows:
   on the primary shard which means they can be recovered from local disk
   upon a node restart.
 
+Release Notes
+-------------
+
+0.1.1
+
+* Compatibility with API changes in Elasticsearch 1.x
+* UI tweaks
+
+0.1.0
+
+* Initial Release
+
