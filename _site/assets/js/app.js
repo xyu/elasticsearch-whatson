@@ -1269,6 +1269,17 @@
 					}
 				} );
 
+			// Hover & click target
+			index_g
+				.append( 'rect' )
+				.attr( "x", function( d, i ) {
+					return index_x( i + 1/10 );
+				} )
+				.attr( "y", 0 )
+				.attr( "width", index_x( 1 - 2/10 ) )
+				.attr( "height", svg_index_height )
+				.classed( { 'hover-target': true } );
+
 			// Index primary size
 			index_g
 				.append( 'rect' )

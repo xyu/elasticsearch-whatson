@@ -238,6 +238,9 @@ td.info-footer-value.col-status {
 .index rect.total {
 	opacity: 0.5;
 }
+.index rect.hover-target {
+	fill: #ffffff;
+}
 .index_ratio .line {
 	stroke: #d0363e;
 }
@@ -260,6 +263,10 @@ div#indices-svg-container.selected.highlight_shards svg .shard.highlight {
 }
 div#indices-svg-container.highlight_shards svg .shard {
 	opacity: 0.1;
+}
+div#indices-svg-container.hover svg .index:hover rect.total {
+	stroke-width: 2px;
+	stroke: #2e2e2e;
 }
 div#indices-svg-container.hover svg .index:hover,
 div#indices-svg-container.hover svg .shard:hover,
