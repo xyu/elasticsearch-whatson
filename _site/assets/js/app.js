@@ -20,7 +20,13 @@
 			var self = this;
 
 			// Set default configs
-			self._info.host = window.location.protocol + '//' + window.location.host;
+			if ( '/_plugin/whatson' == window.location.pathname.substr(0,16) ) {
+				// Running as ES site plugin
+				self._info.host = window.location.protocol + '//' + window.location.host;
+			} else {
+				// Running elsewhere
+				self._info.host = '';
+			}
 			$( '#navbar-clusterconfig-host' ).val( self._info.host );
 			self._refresh_interval = 5000;
 			$( '#navbar-clusterconfig-refresh' ).val( self._refresh_interval / 1000 );
@@ -50,13 +56,15 @@
 			$( '#navbar-clusterconfig-update' ).on( 'click', function() {
 				var need_refresh = false;
 				var host = $( '#navbar-clusterconfig-host' ).val();
-				host = host.replace(/\/$/g, "");
-				if ( null == host.match(/^https?:\/\//) )
-					host = 'http://' + host;
-				if ( null == host.match(/:[0-9]*$/) )
-					host += ':9200';
+				if ( '' != host ) {
+					host = host.replace(/\/$/g, "");
+					if ( null == host.match(/^https?:\/\//) )
+						host = 'http://' + host;
+					if ( null == host.match(/:[0-9]*$/) )
+						host += ':9200';
 
-				$( '#navbar-clusterconfig-host' ).val( host );
+					$( '#navbar-clusterconfig-host' ).val( host );
+				}
 				if ( self._info.host != host ) {
 					self._info.host = host;
 					need_refresh = true;
@@ -83,13 +91,28 @@
 			if ( null != self._interval_id ) {
 				window.clearInterval( self._interval_id );
 			}
-			self._interval_id = window.setInterval( function() {
-				self.sync_data();
-			}, self._refresh_interval );
 
 			nodes.reset();
 			indices.reset();
 			self._is_refreshing = false;
+
+			if ( '' == self._info.host ) {
+				self.set_info( {
+					'status': 'red',
+					'name': 'No Host Set'
+				} );
+				self.render();
+
+				$( '#navbar-clustername-statusicon' ).addClass( 'configure' );
+				$( '#navbar-clusterconfig' ).slideDown();
+
+				return;
+			}
+
+			self._interval_id = window.setInterval( function() {
+				self.sync_data();
+			}, self._refresh_interval );
+
 			self.sync_data();
 		},
 
