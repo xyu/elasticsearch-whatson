@@ -9,6 +9,13 @@ Whatson is an [elasticsearch](http://elasticsearch.org/) plugin to visualize the
 
 And designed to give a more compact view of key cluster stats especially useful for large clusters with lots of nodes or lots of indices.
 
+"Hosted" Version
+----------------
+
+Whatson can be used directly from its GitHub Pages site without installation. Just click the icon next to "Not Connected" on the top navbar and configure the elasticsearch host Whatson should connect to. Boom.
+
+[http://whatson.xyu.io/](http://whatson.xyu.io/)
+
 Installation
 ------------
 
@@ -57,6 +64,11 @@ Segments are drawn on a logarithmic scale based on the byte size of the segment 
 Release Notes
 -------------
 
+0.1.2
+
+* Make it easier to select small shards
+* Prompt for ES host before trying to connect when running in "stand alone" mode
+
 0.1.1
 
 * Compatibility with API changes in Elasticsearch 1.x
@@ -66,3 +78,8 @@ Release Notes
 
 * Initial Release
 
+Who's Using Whatson?
+--------------------
+
+* [WordPress.com](http://developer.wordpress.com/2014/02/12/like-elasticsearch-we-do-too/)
+* [Qbox.io](http://blog.qbox.io/monitor-multi-node-elasticsearch-cluster-with-whatson-qbox-io)
