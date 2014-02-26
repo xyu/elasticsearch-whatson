@@ -1617,7 +1617,7 @@
 				if ( !element.data( 'powertip-init' ) ) {
 					element.powerTip( {
 						manual: true,
-						placement: 'e',
+						placement: 's',
 						smartPlacement: true
 					} );
 					element.data( 'powertip-init', true );
@@ -1788,7 +1788,7 @@
 					.clamp( true )
 					.nice()
 					.range( [ self._svg_height, 0 ] )
-					.domain( [ Math.max( 1, self._segment_size.min ), self._segment_size.max ] ),
+					.domain( [ self._segment_size.max/10000, self._segment_size.max ] ),
 				segment_axis = d3
 					.svg
 					.axis()
@@ -1865,6 +1865,16 @@
 			segment_g
 				.append( 'rect' )
 				.attr( "x", function( d, i ) {
+					return segment_x( i );
+				} )
+				.attr( "y", 0 )
+				.attr( "width", segment_x( 1 ) )
+				.attr( "height", self._svg_height )
+				.classed( { 'hover-target': true } );
+
+			segment_g
+				.append( 'rect' )
+				.attr( "x", function( d, i ) {
 					return segment_x( i + 1/10 );
 				} )
 				.attr( "y", function( d ) {
@@ -1872,7 +1882,7 @@
 				}  )
 				.attr( "width", segment_x( 1 - 2/10 ) )
 				.attr( "height", function( d ) {
-					return self._svg_height - segment_y( d.size_in_bytes );
+					return self._svg_height - segment_y( d.size_in_bytes ) + 1;
 				} )
 				.classed( { 'size': true } );
 
