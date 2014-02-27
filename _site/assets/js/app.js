@@ -1815,6 +1815,11 @@
 				svg = d3
 					.select( '#segments-rendered-' + index + '-' + shard_num + '-' + shard_instance.routing.node );
 
+			// Sort segments
+			segments.sort( function( a, b ) {
+				return b.size_in_bytes - a.size_in_bytes;
+			} );
+
 			if ( undefined == svg.attr( 'preserveAspectRatio' ) ) {
 				svg
 					.attr( 'width', self._svg_width + self._svg_padding_x * 2 )
