@@ -296,7 +296,7 @@
 			tr.children( '.col-free' ).text( d3.format( '.3s' )( node.size.free ) + 'B' );
 			tr.children( '.col-index' ).text( d3.format( '.3s' )( node.size.index ) + 'B' );
 			tr.children( '.col-docs' ).text( d3.format( '.3s' )( node.docs.count ) );
-			tr.children( '.col-ratio' ).text( d3.format( '.3s' )( node.docs.deleted_ratio * 100 ) + '%' );
+			tr.children( '.col-ratio' ).text( d3.format( '.2f' )( node.docs.deleted_ratio * 100 ) + '%' );
 		},
 
 		get_node: function( node_id ) {
@@ -564,7 +564,7 @@
 					var tooltip = '<strong>' + d.name + '</strong>';
 					tooltip += d3.format( '.3s' )( d.size.index ) + 'B Index';
 					tooltip += '<br>' + d3.format( '.3s' )( d.docs.count ) + ' Docs';
-					tooltip += '<br>' + d3.format( '.3s' )( d.docs.deleted_ratio * 100 ) + '% Deleted';
+					tooltip += '<br>' + d3.format( '.2f' )( d.docs.deleted_ratio * 100 ) + '% Deleted';
 					return tooltip;
 				} )
 				.classed( { 'index': true } )
@@ -760,7 +760,7 @@
 			tr.children( '.col-free' ).text( d3.format( '.3s' )( cluster_totals.free ) + 'B' );
 			tr.children( '.col-index' ).text( d3.format( '.3s' )( cluster_totals.index ) + 'B' );
 			tr.children( '.col-docs' ).text( d3.format( '.3s' )( cluster_totals.docs ) );
-			tr.children( '.col-ratio' ).text( d3.format( '.3s' )( get_deleted_ratio( cluster_totals.docs, cluster_totals.deleted ) * 100 ) + '%' );
+			tr.children( '.col-ratio' ).text( d3.format( '.2f' )( get_deleted_ratio( cluster_totals.docs, cluster_totals.deleted ) * 100 ) + '%' );
 		}
 	};
 
@@ -927,7 +927,7 @@
 				tr_index.children( '.col-size-primary' ).text( d3.format( '.3s' )( index.size.primary ) + 'B' );
 				tr_index.children( '.col-size-total' ).text( d3.format( '.3s' )( index.size.total ) + 'B' );
 				tr_index.children( '.col-docs' ).text( d3.format( '.3s' )( index.docs.count ) );
-				tr_index.children( '.col-ratio' ).text( d3.format( '.3s' )( index.docs.deleted_ratio * 100 ) + '%' );
+				tr_index.children( '.col-ratio' ).text( d3.format( '.2f' )( index.docs.deleted_ratio * 100 ) + '%' );
 			}
 
 			if ( null == shard ) {
@@ -978,7 +978,7 @@
 				tr_shard.children( '.col-size-primary' ).text( d3.format( '.3s' )( shard.size.primary ) + 'B' );
 				tr_shard.children( '.col-size-total' ).text( d3.format( '.3s' )( shard.size.total ) + 'B' );
 				tr_shard.children( '.col-docs' ).text( d3.format( '.3s' )( shard.docs.count ) );
-				tr_shard.children( '.col-ratio' ).text( d3.format( '.3s' )( shard.docs.deleted_ratio * 100 ) + '%' );
+				tr_shard.children( '.col-ratio' ).text( d3.format( '.2f' )( shard.docs.deleted_ratio * 100 ) + '%' );
 			}
 		},
 
@@ -1336,7 +1336,7 @@
 					tooltip += d3.format( '.3s' )( d.size.primary ) + 'B Primary';
 					tooltip += '<br>' + d3.format( '.3s' )( d.size.total ) + 'B Total';
 					tooltip += '<br>' + d3.format( '.3s' )( d.docs.count ) + ' Docs';
-					tooltip += '<br>' + d3.format( '.3s' )( d.docs.deleted_ratio * 100 ) + '% Deleted';
+					tooltip += '<br>' + d3.format( '.2f' )( d.docs.deleted_ratio * 100 ) + '% Deleted';
 					return tooltip;
 				} )
 				.classed( { 'total': true } );
@@ -1848,7 +1848,7 @@
 					var tooltip = '<strong>' + d.id + '</strong>';
 					tooltip += d3.format( '.3s' )( d.size_in_bytes ) + 'B';
 					tooltip += '<br>' + d3.format( '.3s' )( d.num_docs ) + ' Docs';
-					tooltip += '<br>' + d3.format( '.3s' )( d.deleted_ratio * 100 ) + '% Deleted';
+					tooltip += '<br>' + d3.format( '.2f' )( d.deleted_ratio * 100 ) + '% Deleted';
 					return tooltip;
 				} )
 				.attr( 'class', function(d) {
