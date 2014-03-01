@@ -9,7 +9,8 @@
 				major: null,
 				minor: null,
 				patch: null
-			}
+			},
+			master_node: null
 		},
 		_is_refreshing: false,
 		_last_update: null,
@@ -327,21 +328,29 @@
 
 			var endpoints = [
 				cluster.get_info().host + '/_nodes/_all/attributes',
-				cluster.get_info().host + '/_nodes/stats/indices,fs'
+				cluster.get_info().host + '/_nodes/stats/indices,fs',
+				cluster.get_info().host + '/_cluster/state/master_node'
 			];
 
 			if ( 0 == cluster.get_info().version.major ) {
 				endpoints = [
 					cluster.get_info().host + '/_nodes',
-					cluster.get_info().host + '/_nodes/stats?fs=true'
+					cluster.get_info().host + '/_nodes/stats?fs=true',
+					cluster.get_info().host + '/_cluster/state?filter_blocks=true&filter_routing_table=true&filter_metadata=true'
 				];
 			}
 
 			$.when(
 				$.getJSON( endpoints[0] ),
-				$.getJSON( endpoints[1] )
+				$.getJSON( endpoints[1] ),
+				$.getJSON( endpoints[2] )
 			)
-			.done(function( result_nodes, result_nodes_stats ) {
+			.done(function( result_nodes, result_nodes_stats, result_cluster_state ) {
+
+				// Set Master Node ID
+				cluster.set_info( {
+					'master_node': result_cluster_state[0].master_node
+				} );
 
 				// Set data
 				_.each( result_nodes[0].nodes, function( node, node_id ) {
@@ -730,12 +739,12 @@
 				cluster_version = '',
 				cluster_version_mixed = false,
 				cluster_totals = {
-				'disk': 0,
-				'free': 0,
-				'index': 0,
-				'docs': 0,
-				'deleted': 0
-			};
+					'disk': 0,
+					'free': 0,
+					'index': 0,
+					'docs': 0,
+					'deleted': 0
+				};
 
 			_.each( self._nodes, function( node ) {
 				if ( '' == cluster_version )
@@ -751,7 +760,9 @@
 			} );
 
 			var tr = $( '#nodes-info-footer tbody.totals tr' );
-			tr.children( '.col-name' ).html( '<em>Cluster Totals</em>' );
+			tr.children( '.col-name' ).html(
+				'<em>Cluster &mdash; ' + self._nodes[ cluster.get_info().master_node ].name + '</em>'
+			);
 			if ( cluster_version_mixed )
 				tr.children( '.col-ver' ).html( '<em>Mixed!</em>' );
 			else
@@ -1001,7 +1012,7 @@
 
 			var endpoints = [
 				cluster.get_info().host + '/_cluster/health?level=shards',
-				cluster.get_info().host + '/_cluster/state/master_node,routing_table',
+				cluster.get_info().host + '/_cluster/state/routing_table',
 				cluster.get_info().host + '/_status?recovery=true'
 			];
 
@@ -1021,7 +1032,17 @@
 			.done(function( result_health, result_cluster_state, result_status ) {
 
 				_.each( result_health[0].indices, function( index, index_name ) {
-					self._indices[ index_name ] = _.defaults( index, self._indices[ index_name ] );
+					var data = index;
+					data.size = {
+						'primary': 0,
+						'total': 0
+					};
+					data.docs = {
+						'count': 0,
+						'deleted': 0,
+						'deleted_ratio': 0
+					};
+					self._indices[ index_name ] = _.defaults( data, self._indices[ index_name ] );
 
 					// Set metadata
 					self._indices[ index_name ].id = index_name;
@@ -1030,7 +1051,22 @@
 
 				_.each( result_cluster_state[0].routing_table.indices, function( index, index_name ) {
 					_.each( index.shards, function( shards, shard_num ) {
-						self._indices[ index_name ][ 'shards' ][ shard_num ][ 'shards' ] = shards;
+						self._indices[ index_name ][ 'shards' ][ shard_num ] = _.defaults(
+							{
+								'shard_num': shard_num,
+								'shards': shards,
+								'size': {
+									'primary': 0,
+									'total': 0
+								},
+								'docs': {
+									'count': 0,
+									'deleted': 0,
+									'deleted_ratio': 0
+								}
+							},
+							self._indices[ index_name ][ 'shards' ][ shard_num ]
+						);
 					} );
 				} );
 
@@ -1817,7 +1853,16 @@
 
 			// Sort segments
 			segments.sort( function( a, b ) {
-				return b.size_in_bytes - a.size_in_bytes;
+				if ( b.size_in_bytes != a.size_in_bytes ) {
+					// Large -> Small size; small shards merge into larger ones
+					return b.size_in_bytes - a.size_in_bytes;
+				} else if ( b.deleted_ratio != a.deleted_ratio ) {
+					// Less -> More deleted; more deleted more likely to merge
+					return a.deleted_ratio - b.deleted_ratio;
+				} else {
+					// Older -> Newer gen; newer gen from new merges / created
+					return a.generation - b.generation
+				}
 			} );
 
 			if ( undefined == svg.attr( 'preserveAspectRatio' ) ) {

@@ -224,7 +224,7 @@ div#nodes-svg-container.selected svg .node.selected {
 
 td.info-footer-value.col-status {
 	text-align: left;
-	width: 135px;
+	width: 190px;
 }
 .index.status-green rect {
 	fill: #74b73f;
