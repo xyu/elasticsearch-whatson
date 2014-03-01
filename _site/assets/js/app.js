@@ -1021,7 +1021,17 @@
 			.done(function( result_health, result_cluster_state, result_status ) {
 
 				_.each( result_health[0].indices, function( index, index_name ) {
-					self._indices[ index_name ] = _.defaults( index, self._indices[ index_name ] );
+					var data = index;
+					data.size = {
+						'primary': 0,
+						'total': 0
+					};
+					data.docs = {
+						'count': 0,
+						'deleted': 0,
+						'deleted_ratio': 0
+					};
+					self._indices[ index_name ] = _.defaults( data, self._indices[ index_name ] );
 
 					// Set metadata
 					self._indices[ index_name ].id = index_name;
@@ -1030,7 +1040,22 @@
 
 				_.each( result_cluster_state[0].routing_table.indices, function( index, index_name ) {
 					_.each( index.shards, function( shards, shard_num ) {
-						self._indices[ index_name ][ 'shards' ][ shard_num ][ 'shards' ] = shards;
+						self._indices[ index_name ][ 'shards' ][ shard_num ] = _.defaults(
+							{
+								'shard_num': shard_num,
+								'shards': shards,
+								'size': {
+									'primary': 0,
+									'total': 0
+								},
+								'docs': {
+									'count': 0,
+									'deleted': 0,
+									'deleted_ratio': 0
+								}
+							},
+							self._indices[ index_name ][ 'shards' ][ shard_num ]
+						);
 					} );
 				} );
 
