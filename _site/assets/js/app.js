@@ -1817,7 +1817,16 @@
 
 			// Sort segments
 			segments.sort( function( a, b ) {
-				return b.size_in_bytes - a.size_in_bytes;
+				if ( b.size_in_bytes != a.size_in_bytes ) {
+					// Large -> Small size; small shards merge into larger ones
+					return b.size_in_bytes - a.size_in_bytes;
+				} else if ( b.deleted_ratio != a.deleted_ratio ) {
+					// Less -> More deleted; more deleted more likely to merge
+					return a.deleted_ratio - b.deleted_ratio;
+				} else {
+					// Older -> Newer gen; newer gen from new merges / created
+					return a.generation - b.generation
+				}
 			} );
 
 			if ( undefined == svg.attr( 'preserveAspectRatio' ) ) {
