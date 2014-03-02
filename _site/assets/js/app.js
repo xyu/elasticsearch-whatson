@@ -1749,6 +1749,9 @@
 			var self = this,
 				redraw = false;
 
+			if ( self._pause )
+				return;
+
 			if ( self._rendered.index != index || self._rendered.shard_num != shard_num ) {
 				var html = '';
 				_.each( shards, function( shard, shard_num ) {
