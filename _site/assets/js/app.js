@@ -1891,7 +1891,18 @@
 				.attr( 'data-segment', function(d) { return JSON.stringify( d ); } )
 				.attr( 'data-powertip', function(d) {
 					var tooltip = '<strong>' + d.id + '</strong>';
-					tooltip += d3.format( '.3s' )( d.size_in_bytes ) + 'B';
+
+					if ( d.committed && d.search && d.on_primary ) {
+						tooltip += 'Synced (Primary)';
+					} else if ( d.committed && d.search ) {
+						tooltip += 'Synced';
+					} else if ( d.committed ) {
+						tooltip += 'Committed';
+					} else {
+						tooltip += 'Uncommitted';
+					}
+
+					tooltip += '<br>' + d3.format( '.3s' )( d.size_in_bytes ) + 'B';
 					tooltip += '<br>' + d3.format( '.3s' )( d.num_docs ) + ' Docs';
 					tooltip += '<br>' + d3.format( '.2f' )( d.deleted_ratio * 100 ) + '% Deleted';
 					return tooltip;
