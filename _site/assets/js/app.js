@@ -673,6 +673,7 @@
 
 			if ( null == node_id || undefined == node_shards[ node_id ] ) {
 				indices.set_highlight_shards( {} );
+				return;
 			}
 
 			_.each(
@@ -950,7 +951,7 @@
 				tr_shard.children( '.col-ratio' ).html( '&mdash;' );
 			} else {
 				var shard_status = shard.active_shards + ' active';
-				if ( 'green' != shard.status ) {
+				if ( !( 'green' == shard.status && 0 == shard.relocating_shards ) ) {
 					var max_recovery_time = {
 							'in_millis': 0,
 							'string': ''
@@ -980,7 +981,7 @@
 					}
 
 					if ( max_recovery_time.in_millis > 0 ) {
-						shard_status += ' (' + max_recovery_time.string + ')';
+						shard_status += ' (≈' + max_recovery_time.string + ')';
 					}
 				}
 
@@ -1427,7 +1428,7 @@
 					} )
 					.style( "fill", function( d ) {
 						// Heatmap!
-						if ( 'green' == d.status ) {
+						if ( 'green' == d.status && 0 == d.relocating_shards ) {
 							return shard_bytes( d.size.primary );
 						}
 
@@ -1455,6 +1456,25 @@
 					.attr( 'data-powertip', function(d) {
 						var tooltip = '<strong>' + index.id + ' &mdash; ' + d.shard_num + '</strong>';
 						tooltip += d3.format( '.3s' )( d.size.primary ) + 'B Primary';
+
+						if ( !( 'green' == d.status && 0 == d.relocating_shards ) ) {
+							_.each( d.shards, function( shard_instance ) {
+								if ( 'STARTED' == shard_instance.state ) {
+									return;
+								}
+
+								if ( 'INITIALIZING' == shard_instance.state ) {
+									tooltip += '<br>Initializing<br>→&nbsp;' + nodes.get_node( shard_instance.node ).name;
+									return;
+								}
+
+								if ( 'RELOCATING' == shard_instance.state ) {
+									tooltip += '<br>Relocating<br>←&nbsp;' + nodes.get_node( shard_instance.node ).name + '<br>→&nbsp;' + nodes.get_node( shard_instance.relocating_node ).name;
+									return;
+								}
+							} );
+						}
+
 						return tooltip;
 					} )
 					.on( "click", function( d ) {
