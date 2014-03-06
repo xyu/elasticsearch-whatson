@@ -673,6 +673,7 @@
 
 			if ( null == node_id || undefined == node_shards[ node_id ] ) {
 				indices.set_highlight_shards( {} );
+				return;
 			}
 
 			_.each(
