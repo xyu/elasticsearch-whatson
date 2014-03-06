@@ -951,7 +951,7 @@
 				tr_shard.children( '.col-ratio' ).html( '&mdash;' );
 			} else {
 				var shard_status = shard.active_shards + ' active';
-				if ( 'green' != shard.status ) {
+				if ( !( 'green' == shard.status && 0 == shard.relocating_shards ) ) {
 					var max_recovery_time = {
 							'in_millis': 0,
 							'string': ''
@@ -1428,7 +1428,7 @@
 					} )
 					.style( "fill", function( d ) {
 						// Heatmap!
-						if ( 'green' == d.status ) {
+						if ( 'green' == d.status && 0 == d.relocating_shards ) {
 							return shard_bytes( d.size.primary );
 						}
 
