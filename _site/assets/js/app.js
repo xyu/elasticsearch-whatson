@@ -981,7 +981,7 @@
 					}
 
 					if ( max_recovery_time.in_millis > 0 ) {
-						shard_status += ' (' + max_recovery_time.string + ')';
+						shard_status += ' (≈' + max_recovery_time.string + ')';
 					}
 				}
 
