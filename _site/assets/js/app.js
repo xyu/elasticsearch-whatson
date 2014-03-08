@@ -574,6 +574,17 @@
 					tooltip += d3.format( '.3s' )( d.size.index ) + 'B Index';
 					tooltip += '<br>' + d3.format( '.3s' )( d.docs.count ) + ' Docs';
 					tooltip += '<br>' + d3.format( '.2f' )( d.docs.deleted_ratio * 100 ) + '% Deleted';
+
+					if ( undefined != self._node_shards[ d.id ] ) {
+						tooltip += '<br>' + self._node_shards[ d.id ].STARTED.length + ' Shards';
+						if ( self._node_shards[ d.id ].INITIALIZING.length > 0 ) {
+							tooltip += ', ' + self._node_shards[ d.id ].INITIALIZING.length + ' Initializing';
+						}
+						if ( self._node_shards[ d.id ].RELOCATING.length > 0 ) {
+							tooltip += ', ' + self._node_shards[ d.id ].RELOCATING.length + ' Relocating Away';
+						}
+					}
+
 					return tooltip;
 				} )
 				.classed( { 'index': true } )
