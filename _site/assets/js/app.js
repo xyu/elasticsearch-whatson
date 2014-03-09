@@ -258,7 +258,7 @@
 				$( '#nodes' ).removeClass( 'hover' );
 			} );
 
-			$( '#nodes-svg' ).on( 'mouseover', '.index, .system, .free', function( event ) {
+			$( '#nodes-svg' ).on( 'mouseover', '.disk', function( event ) {
 				var element = $( this )
 
 				self._pause = true;
@@ -274,7 +274,7 @@
 
 				$.powerTip.show( this, event );
 			} );
-			$( '#nodes-svg' ).on( 'mouseleave', '.index, .system, .free', function( event ) {
+			$( '#nodes-svg' ).on( 'mouseleave', '.disk', function( event ) {
 				$.powerTip.hide( this );
 				self._pause = false;
 			} );
@@ -541,21 +541,6 @@
 				} )
 				.attr( 'id', function(d) { return 'node-' + d.id; } );
 
-			// Disk size, a.k.a. BG on entire node column
-			node_g
-				.append( 'rect' )
-				.attr( "x", function( d, i ) {
-					return node_x( i + 1/10 );
-				} )
-				.attr( "y", function( d ) {
-					return node_h( d.size.disk );
-				}  )
-				.attr( "width", node_x( 1 - 2/10 ) )
-				.attr( "height", function( d ) {
-					return self._svg_height;
-				} )
-				.classed( { 'disk': true } );
-
 			// Index size
 			node_g
 				.append( 'rect' )
@@ -569,28 +554,7 @@
 				.attr( "height", function( d ) {
 					return self._svg_height - node_h( d.size.index );
 				} )
-				.attr( 'data-powertip', function(d) {
-					var tooltip = '<strong>' + d.name + '</strong>';
-					tooltip += d3.format( '.3s' )( d.size.index ) + 'B Index';
-					tooltip += '<br>' + d3.format( '.3s' )( d.docs.count ) + ' Docs';
-					tooltip += '<br>' + d3.format( '.2f' )( d.docs.deleted_ratio * 100 ) + '% Deleted';
-
-					if ( undefined != self._node_shards[ d.id ] ) {
-						tooltip += '<br>' + self._node_shards[ d.id ].STARTED.length + ' Shards';
-						if ( self._node_shards[ d.id ].INITIALIZING.length > 0 ) {
-							tooltip += ', ' + self._node_shards[ d.id ].INITIALIZING.length + ' Initializing';
-						}
-						if ( self._node_shards[ d.id ].RELOCATING.length > 0 ) {
-							tooltip += ', ' + self._node_shards[ d.id ].RELOCATING.length + ' Relocating Away';
-						}
-					}
-
-					return tooltip;
-				} )
-				.classed( { 'index': true } )
-				.on( "click", function( d ) {
-					click_event( this, d );
-				} );
+				.classed( { 'index': true } );
 
 			// System size
 			node_g
@@ -605,15 +569,7 @@
 				.attr( "height", function( d ) {
 					return self._svg_height - node_h( d.size.system );
 				} )
-				.attr( 'data-powertip', function(d) {
-					var tooltip = '<strong>' + d.name + '</strong>';
-					tooltip += d3.format( '.3s' )( d.size.system ) + 'B Other';
-					return tooltip;
-				} )
-				.classed( { 'system': true } )
-				.on( "click", function( d ) {
-					click_event( this, d );
-				} );
+				.classed( { 'system': true } );
 
 			// Free disk
 			node_g
@@ -628,12 +584,39 @@
 				.attr( "height", function( d ) {
 					return self._svg_height - node_h( d.size.free );
 				} )
+				.classed( { 'free': true } );
+
+			// Disk size, a.k.a. overlay on the entire node column
+			node_g
+				.append( 'rect' )
+				.attr( "x", function( d, i ) {
+					return node_x( i + 1/10 );
+				} )
+				.attr( "y", function( d ) {
+					return node_h( d.size.disk );
+				}  )
+				.attr( "width", node_x( 1 - 2/10 ) )
+				.attr( "height", function( d ) {
+					return self._svg_height;
+				} )
 				.attr( 'data-powertip', function(d) {
 					var tooltip = '<strong>' + d.name + '</strong>';
-					tooltip += d3.format( '.3s' )( d.size.free ) + 'B Free';
+					tooltip += d3.format( '.3s' )( d.size.index ) + 'B Index';
+					tooltip += '<br>' + d3.format( '.2f' )( d.docs.deleted_ratio * 100 ) + '% Deleted';
+
+					if ( undefined != self._node_shards[ d.id ] ) {
+						tooltip += '<br>' + self._node_shards[ d.id ].STARTED.length + ' Shards';
+						if ( self._node_shards[ d.id ].INITIALIZING.length > 0 ) {
+							tooltip += ', ' + self._node_shards[ d.id ].INITIALIZING.length + ' Initializing';
+						}
+						if ( self._node_shards[ d.id ].RELOCATING.length > 0 ) {
+							tooltip += ', ' + self._node_shards[ d.id ].RELOCATING.length + ' Relocating Away';
+						}
+					}
+
 					return tooltip;
 				} )
-				.classed( { 'free': true } )
+				.classed( { 'disk': true } )
 				.on( "click", function( d ) {
 					click_event( this, d );
 				} );
@@ -658,7 +641,6 @@
 				.datum(filtered_nodes.nodes)
 				.attr("class", "line")
 				.attr("d", ratio_line);
-
 
 			ratio_g
 				.selectAll('circle')
@@ -899,15 +881,17 @@
 				);
 			} );
 
-			$( '#indices-svg' ).on( 'mouseover', '.total, .shard rect', function( event ) {
+			$( '#indices-svg' ).on( 'mouseover', '.hover-target, .shard rect', function( event ) {
 				var element = $( this )
 
 				self._pause = true;
 
 				if ( !element.data( 'powertip-init' ) ) {
+					var placement = ( 'hover-target' == element.attr( 'class' ) ? 's' : 'n' );
+
 					element.powerTip( {
 						manual: true,
-						placement: 'e',
+						placement: placement,
 						smartPlacement: true
 					} );
 					element.data( 'powertip-init', true );
@@ -915,7 +899,7 @@
 
 				$.powerTip.show( this, event );
 			} );
-			$( '#indices-svg' ).on( 'mouseleave', '.total, .shard rect', function( event ) {
+			$( '#indices-svg' ).on( 'mouseleave', '.hover-target, .shard rect', function( event ) {
 				$.powerTip.hide( this );
 				self._pause = false;
 			} );
@@ -1340,17 +1324,6 @@
 					}
 				} );
 
-			// Hover & click target
-			index_g
-				.append( 'rect' )
-				.attr( "x", function( d, i ) {
-					return index_x( i + 1/10 );
-				} )
-				.attr( "y", 0 )
-				.attr( "width", index_x( 1 - 2/10 ) )
-				.attr( "height", svg_index_height )
-				.classed( { 'hover-target': true } );
-
 			// Index primary size
 			index_g
 				.append( 'rect' )
@@ -1379,15 +1352,25 @@
 				.attr( "height", function( d ) {
 					return svg_index_height - index_h( d.size.total );
 				} )
+				.classed( { 'total': true } );
+
+			// Hover & click target
+			index_g
+				.append( 'rect' )
+				.attr( "x", function( d, i ) {
+					return index_x( i );
+				} )
+				.attr( "y", 0 )
+				.attr( "width", index_x( 1 ) )
+				.attr( "height", svg_index_height )
 				.attr( 'data-powertip', function(d) {
 					var tooltip = '<strong>' + d.id + '</strong>';
-					tooltip += d3.format( '.3s' )( d.size.primary ) + 'B Primary';
-					tooltip += '<br>' + d3.format( '.3s' )( d.size.total ) + 'B Total';
-					tooltip += '<br>' + d3.format( '.3s' )( d.docs.count ) + ' Docs';
+					tooltip += d3.format( '.3s' )( d.size.total ) + 'B Total';
+					tooltip += '<br>' + d3.format( '.3s' )( d.size.primary ) + 'B Primary';
 					tooltip += '<br>' + d3.format( '.2f' )( d.docs.deleted_ratio * 100 ) + '% Deleted';
 					return tooltip;
 				} )
-				.classed( { 'total': true } );
+				.classed( { 'hover-target': true } );
 
 			self._svg
 				.append("g")
@@ -1475,12 +1458,12 @@
 								}
 
 								if ( 'INITIALIZING' == shard_instance.state ) {
-									tooltip += '<br>Initializing<br>→&nbsp;' + nodes.get_node( shard_instance.node ).name;
+									tooltip += '<em>Initializing Onto</em>→&nbsp;' + nodes.get_node( shard_instance.node ).name;
 									return;
 								}
 
 								if ( 'RELOCATING' == shard_instance.state ) {
-									tooltip += '<br>Relocating<br>←&nbsp;' + nodes.get_node( shard_instance.node ).name + '<br>→&nbsp;' + nodes.get_node( shard_instance.relocating_node ).name;
+									tooltip += '<em>Relocating From &amp; To</em>←&nbsp;' + nodes.get_node( shard_instance.node ).name + '<br>→&nbsp;' + nodes.get_node( shard_instance.relocating_node ).name;
 									return;
 								}
 							} );
