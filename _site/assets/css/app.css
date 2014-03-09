@@ -136,15 +136,22 @@ td.info-footer-value {
 	font-weight: bold;
 	display: block;
 	border-bottom: 1px solid #eee;
-	margin-bottom: 0.25em;
+	margin: 0;
+}
+#powerTip em {
+	color: #fff;
+	font-weight: normal;
+	display: block;
+	border-bottom: 1px dotted #eee;
+	margin: 0.5em 0 0 0;
 }
 
 /* Nodes Section */
 
 .node .disk {
-	fill: none;
+	fill: rgba(0, 0, 0, 0);
 	stroke: none;
-	stroke-width: 3px;
+	stroke-width: 1.5px;
 }
 .node .free {
 	fill: #eeeeee;
@@ -239,7 +246,7 @@ td.info-footer-value.col-status {
 	opacity: 0.5;
 }
 .index rect.hover-target {
-	fill: #ffffff;
+	fill: rgba(0, 0, 0, 0);
 }
 .index_ratio .line {
 	stroke: #d0363e;
