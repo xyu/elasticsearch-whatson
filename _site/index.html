@@ -53,13 +53,15 @@
 				<span id="navbar-clustername-name"></span>
 				<a id="navbar-clustername-action" href="#" title="Change Cluster"><i id="navbar-clustername-statusicon" class="fa fa-fw"></i></a>
 			</div>
-			<div class="offset-by-nine seven columns" id="navbar-clusterconfig" style="display:none;">
-				<label for="navbar-clusterconfig-host">Elasticsearch Host</label>
-				<input id="navbar-clusterconfig-host" type="text" placeholder="protocol://host:port" />
-				<label for="navbar-clusterconfig-refresh">Refresh Interval</label>
-				<input id="navbar-clusterconfig-refresh" type="number" min="1" placeholder="seconds" />
-				<input id="navbar-clusterconfig-update" type="button" value="Save Configs" />
-			</div>
+			<form id="navbar-clusterconfig-update">
+				<div class="offset-by-nine seven columns" id="navbar-clusterconfig" style="display:none;">
+					<label for="navbar-clusterconfig-host">Elasticsearch Host</label>
+					<input id="navbar-clusterconfig-host" type="text" placeholder="protocol://host:port" />
+					<label for="navbar-clusterconfig-refresh">Refresh Interval</label>
+					<input id="navbar-clusterconfig-refresh" type="number" min="1" placeholder="seconds" />
+					<input type="submit" value="Save Configs" />
+				</div>
+			</form>
 		</div>
 	</div>
 

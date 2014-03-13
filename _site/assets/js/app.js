@@ -46,15 +46,19 @@
 				var config_panel = $( '#navbar-clusterconfig' );
 
 				if ( element.hasClass( 'configure' ) ) {
-					config_panel.slideUp();
+					config_panel.slideUp( 'fast' );
 					element.removeClass( 'configure' );
 				} else {
-					config_panel.slideDown();
+					config_panel.slideDown( 'fast', function() {
+						$( '#navbar-clusterconfig-host' ).focus();
+					} );
 					element.addClass( 'configure' );
 				}
 			} );
 
-			$( '#navbar-clusterconfig-update' ).on( 'click', function() {
+			$( '#navbar-clusterconfig-update' ).on( 'submit', function(event) {
+				event.preventDefault();
+
 				var need_refresh = false;
 				var host = $( '#navbar-clusterconfig-host' ).val();
 				if ( '' != host ) {
@@ -82,7 +86,7 @@
 				}
 
 				$( '#navbar-clustername-statusicon' ).removeClass( 'configure' );
-				$( '#navbar-clusterconfig' ).slideUp();
+				$( '#navbar-clusterconfig' ).slideUp( 'fast' );
 			} );
 		},
 
@@ -105,7 +109,9 @@
 				self.render();
 
 				$( '#navbar-clustername-statusicon' ).addClass( 'configure' );
-				$( '#navbar-clusterconfig' ).slideDown();
+				$( '#navbar-clusterconfig' ).slideDown( 'fast', function() {
+					$( '#navbar-clusterconfig-host' ).focus();
+				} );
 
 				return;
 			}

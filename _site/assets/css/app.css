@@ -60,7 +60,7 @@
 	color: #2e2e2e;
 	width: 100%;
 }
-#navbar-clusterconfig input#navbar-clusterconfig-update {
+#navbar-clusterconfig input[type=submit] {
 	width: auto;
 	float: right;
 }
