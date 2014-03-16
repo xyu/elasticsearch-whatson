@@ -953,7 +953,11 @@
 			} else {
 				var shard_status = shard.active_shards + ' active';
 				if ( !( 'green' == shard.status && 0 == shard.relocating_shards ) ) {
-					var shard_states = {
+					var max_recovery_time = {
+							'in_millis': 0,
+							'string': ''
+						},
+						shard_states = {
 							'UNASSIGNED': 0,
 							'INITIALIZING': 0,
 							'RELOCATING': 0,
@@ -962,20 +966,23 @@
 
 					_.each( shard.shards, function( shard ) {
 						shard_states[ shard.state ]++;
+						if ( undefined != shard.recovery_time && max_recovery_time.in_millis < shard.recovery_time.in_millis ) {
+							max_recovery_time = shard.recovery_time;
+						}
 					} );
 
 					if ( shard_states[ 'UNASSIGNED' ] > 0 ) {
 						shard_status = shard_states[ 'UNASSIGNED' ] + ' unassigned';
 					} else if ( shard_states[ 'INITIALIZING' ] > 0 ) {
-						// Rough estimate!! Should use actual shard instance sizes.
-						done_percent = shard.size.total / ( shard.size.primary * ( shard.active_shards + shard.initializing_shards ) );
-						done_percent = Math.min( done_percent, 0.999 );
-
-						shard_status = shard_states[ 'INITIALIZING' ] + ' initializing (' + d3.format( '.1f' )( done_percent * 100 ) + '%)';
+						shard_status = shard_states[ 'INITIALIZING' ] + ' initializing';
 					} else if ( shard_states[ 'RELOCATING' ] > 0 ) {
 						shard_status = shard_states[ 'RELOCATING' ] + ' relocating';
 					} else {
 						shard_status = 'unknown error';
+					}
+
+					if ( max_recovery_time.in_millis > 0 ) {
+						shard_status += ' (' + max_recovery_time.string + ' elapsed)';
 					}
 				}
 
