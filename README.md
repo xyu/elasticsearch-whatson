@@ -64,6 +64,15 @@ Segments are drawn on a logarithmic scale based on the byte size of the segment 
 Release Notes
 -------------
 
+0.1.3
+
+* Improve shard segment graphs
+* Show elected master node in nodes section
+* Fix handling of unassigned shards and empty indices
+* Fix handling of relocating shards
+* Show shard details during reallocation and recovery
+* General UI improvements
+
 0.1.2
 
 * Make it easier to select small shards
