@@ -70,6 +70,10 @@ The red line drawn across the graph shows the percentage of deleted docs within 
 Release Notes
 -------------
 
+0.1.4
+
+* Elasticsearch 2.x compatablity
+
 0.1.3
 
 * Improve shard segment graphs
