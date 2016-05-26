@@ -21,7 +21,7 @@ Installation
 
 To install Whatson run the Elasticsearch plugin installer on any node:
 
-    bin/plugin -install xyu/elasticsearch-whatson
+    bin/plugin -install xyu/elasticsearch-whatson/0.1.3
 
 Access the plugin by going to the Whatson plugin site. (E.g. http://localhost:9200/_plugin/whatson/)
 
@@ -42,6 +42,8 @@ The nodes section will show a bar chart of available disk on each node. The bars
 * **Yellow** — Disk used by Elasticsearch (some shards on node is in a relocating state)
 * **Orange** — Disk used by Elasticsearch (some shards on node is in a recovery / initializing state)
 
+The red line drawn across the graph shows the percentage of deleted docs on each node.
+
 The indices section will show a bar chart showing size of each index in the cluster color coded by the state of the index (green / yellow / red). The primary size is shown in a darker shade as compared to the total index size.
 
 Below each index shards contained within the index will be shown colored corresponding to the size of the primary shard. If any shard exists in an error state they will be colored as follows:
@@ -49,6 +51,8 @@ Below each index shards contained within the index will be shown colored corresp
 * **Yellow** — Some shards are in a relocating state
 * **Orange** — Some shards are in a recovery or initializing state
 * **Red** — Some shards are unassigned
+
+The red line drawn across the graph shows the percentage of deleted docs in each index.
 
 To inspect the state of underlaying Lucene segments first select a index or shard within an index. Once selected something like the following will be shown.
 
@@ -60,6 +64,8 @@ Segments are drawn on a logarithmic scale based on the byte size of the segment 
 * **Brown** — Segments that have been committed (Lucene committed)
 * **Blue** — Segments that have both been committed and are in the NRT IndexReader
 * **Green** — Segments that have both been committed and are in the NRT IndexReader. In addition these immutable segments are identical to those on the primary shard instance which means they can be recovered from local disk upon a node restart.
+
+The red line drawn across the graph shows the percentage of deleted docs within each segment.
 
 Release Notes
 -------------

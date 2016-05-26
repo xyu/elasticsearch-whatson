@@ -218,6 +218,7 @@
 		_svg_height: 260,
 		_nodes: {},
 		_node_shards: {},
+		_relocating_shards: {},
 		_selected: null,
 		_hover: null,
 		_is_refreshing: false,
@@ -412,9 +413,10 @@
 			});
 		},
 
-		set_shards: function( node_shards ) {
+		set_shards: function( node_shards, relocating_shards ) {
 			var self = this;
 			self._node_shards = node_shards;
+			self._relocating_shards = relocating_shards;
 			self.render();
 		},
 
@@ -615,8 +617,11 @@
 						if ( self._node_shards[ d.id ].INITIALIZING.length > 0 ) {
 							tooltip += ', ' + self._node_shards[ d.id ].INITIALIZING.length + ' Initializing';
 						}
+						if ( self._relocating_shards[ d.id ] > 0 ) {
+							tooltip += ', ' + self._relocating_shards[ d.id ] + ' Relocating In';
+						}
 						if ( self._node_shards[ d.id ].RELOCATING.length > 0 ) {
-							tooltip += ', ' + self._node_shards[ d.id ].RELOCATING.length + ' Relocating Away';
+							tooltip += ', ' + self._node_shards[ d.id ].RELOCATING.length + ' Relocating Out';
 						}
 					}
 
@@ -1629,7 +1634,17 @@
 				} );
 			} );
 
-			nodes.set_shards( node_shards );
+			var relocating_shards = {};
+			_.each( node_shards, function( node ) {
+				_.each( node.RELOCATING, function( shard ) {
+					if ( relocating_shards[ shard.relocating_node ] )
+						relocating_shards[ shard.relocating_node ] += 1;
+					else
+						relocating_shards[ shard.relocating_node ] = 1;
+				} );
+			} );
+
+			nodes.set_shards( node_shards, relocating_shards );
 		}
 	};
 
