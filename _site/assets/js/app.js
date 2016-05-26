@@ -1017,18 +1017,29 @@
 
 			self._is_refreshing = true;
 
-			var endpoints = [
-				cluster.get_info().host + '/_cluster/health?level=shards',
-				cluster.get_info().host + '/_cluster/state/routing_table',
-				cluster.get_info().host + '/_status?recovery=true'
-			];
-
-			if ( 0 == cluster.get_info().version.major ) {
-				endpoints = [
-					cluster.get_info().host + '/_cluster/health?level=shards',
-					cluster.get_info().host + '/_cluster/state?filter_blocks=true&filter_nodes=true&filter_metadata=true',
-					cluster.get_info().host + '/_status?recovery=true'
-				];
+			switch ( cluster.get_info().version.major ) {
+				case 0:
+					var endpoints = [
+						cluster.get_info().host + '/_cluster/health?level=shards',
+						cluster.get_info().host + '/_cluster/state?filter_blocks=true&filter_nodes=true&filter_metadata=true',
+						cluster.get_info().host + '/_status?recovery=true'
+					];
+					break;
+				case 1:
+					var endpoints = [
+						cluster.get_info().host + '/_cluster/health?level=shards',
+						cluster.get_info().host + '/_cluster/state/routing_table',
+						cluster.get_info().host + '/_status?recovery=true'
+					];
+					break;
+				case 2:
+				default:
+					var endpoints = [
+						cluster.get_info().host + '/_cluster/health?level=shards',
+						cluster.get_info().host + '/_cluster/state/routing_table',
+						cluster.get_info().host + '/_stats'
+					];
+					break;
 			}
 
 			$.when(
@@ -1078,16 +1089,33 @@
 				} );
 
 				_.each( result_status[0].indices, function( index, index_name ) {
+					switch ( cluster.get_info().version.major ) {
+						case 0:
+						case 1:
+							var size_primary = index.index.primary_size_in_bytes,
+								size_total = index.index.size_in_bytes,
+								docs_count = index.docs.num_docs,
+								docs_deleted = index.docs.deleted_docs;
+							break;
+						case 2:
+						default:
+							var size_primary = index.primaries.store.size_in_bytes,
+								size_total = index.total.store.size_in_bytes,
+								docs_count = index.total.docs.count,
+								docs_deleted = index.total.docs.deleted;
+							break;
+					}
+
 					self._indices[ index_name ] = _.defaults(
 						{
 							'size': {
-								'primary': index.index.primary_size_in_bytes,
-								'total': index.index.size_in_bytes
+								'primary': size_primary,
+								'total': size_total
 							},
 							'docs': {
-								'count': index.docs.num_docs,
-								'deleted': index.docs.deleted_docs,
-								'deleted_ratio': get_deleted_ratio( index.docs.num_docs, index.docs.deleted_docs )
+								'count': docs_count,
+								'deleted': docs_deleted,
+								'deleted_ratio': get_deleted_ratio( docs_count, docs_deleted )
 							}
 						},
 						self._indices[ index_name ]
