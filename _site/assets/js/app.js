@@ -1037,7 +1037,7 @@
 					var endpoints = [
 						cluster.get_info().host + '/_cluster/health?level=shards',
 						cluster.get_info().host + '/_cluster/state/routing_table',
-						cluster.get_info().host + '/_stats'
+						cluster.get_info().host + '/_stats?level=shards'
 					];
 					break;
 			}
@@ -1136,15 +1136,33 @@
 						};
 
 						_.each( shards, function( shard ) {
-							data.size.total += shard.index.size_in_bytes;
+							let shard_size_in_bytes = 0,
+								shard_num_docs = 0
+								shard_del_docs = 0;
+							switch ( cluster.get_info().version.major ) {
+								case 0:
+								case 1:
+									shard_size_in_bytes = shard.index.size_in_bytes;
+									shard_docs_count = shard.docs.num_docs;
+									shard_docs_deleted = shard.docs.deleted_docs;
+									break;
+								case 2:
+								default:
+									shard_size_in_bytes = shard.store.size_in_bytes;
+									shard_docs_count = shard.docs.count;
+									shard_docs_deleted = shard.docs.deleted;
+									break;
+							}
+
+							data.size.total += shard_size_in_bytes;
 
 							// Fill in shard info
 							if ( shard.routing.primary ) {
-								data.size.primary = shard.index.size_in_bytes;
+								data.size.primary = shard_size_in_bytes;
 								data.docs = {
-									'count': shard.docs.num_docs,
-									'deleted': shard.docs.deleted_docs,
-									'deleted_ratio': get_deleted_ratio( shard.docs.num_docs, shard.docs.deleted_docs )
+									'count': shard_docs_count,
+									'deleted': shard_docs_deleted,
+									'deleted_ratio': get_deleted_ratio( shard_docs_count, shard_docs_deleted )
 								};
 							}
 
