@@ -21,7 +21,7 @@ Installation
 
 To install Whatson run the Elasticsearch plugin installer on any node:
 
-    bin/plugin -install xyu/elasticsearch-whatson/0.1.3
+    bin/plugin install xyu/elasticsearch-whatson/0.1.3
 
 Access the plugin by going to the Whatson plugin site. (E.g. http://localhost:9200/_plugin/whatson/)
 
