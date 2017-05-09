@@ -24,6 +24,9 @@
 			if ( '/_plugin/whatson' == window.location.pathname.substr(0,16) ) {
 				// Running as ES site plugin
 				self._info.host = window.location.protocol + '//' + window.location.host;
+			} else if ( window.location.search.startsWith("?base_uri=") ) {
+				// ES url passed as a parameter
+				self._info.host = window.location.search.substr(10);
 			} else {
 				// Running elsewhere
 				self._info.host = '';
